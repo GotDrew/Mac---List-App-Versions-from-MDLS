@@ -1,19 +1,32 @@
 #!/usr/bin/env bash
-cd /Applications/
+cd /Applications
+subfolder="" # if empty it will check Applications folder + 1 level deep
 for i in */;
 do
-	# if [[ $i == "Adobe "* ]];
-	if [[ $i == "Util"* ]];
+	if [[ $subfolder == "" ]];
 	then
-		# echo "Inside: $i"
+		if [[ $i == *.app* ]];
+		then
+			echo "/Applications/$i: " $(mdls "$i" | grep "Version" )
+		elif [[ $i != *.app* ]];
+		then
+			cd /Applications/"$i"
+			for j in */;
+			do
+				if [[ $j == *.app* ]];
+				then
+					echo "/Applications/$i/$j: " $(mdls "$j" | grep "Version" )
+				fi
+			done
+		fi
+	elif [[ $i == "$subfolder"* ]];
+	then
 		cd /Applications/"$i"
 		for j in */;
 		do
 			if [[ $j == *.app* ]];
 			then
 				echo "$j: " $(mdls "$j" | grep "Version" )
-			# else
-				# echo "$j doesn't seem to be an app"
 			fi
 		done
 	fi
